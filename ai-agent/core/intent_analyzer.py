@@ -38,6 +38,16 @@ class IntentAnalyzer:
             
             # Parse LLM response
             intent_result = self._parse_llm_response(llm_response, query)
+            # If intent is unclear and confidence is low, mark as requiring LLM direct response
+            if (intent_result.primary_intent.type == IntentType.UNKNOWN and 
+                intent_result.primary_intent.confidence < 0.5):
+                intent_result.primary_intent.type = IntentType.GENERAL_CHAT
+                intent_result.primary_intent.confidence = 0.8
+                intent_result.primary_intent.parameters = {"direct_llm_response": True, "query": query}
+                intent_result.needs_clarification = False
+                intent_result.clarification_questions = []
+                
+                logger.info("Intent unclear, marked as GENERAL_CHAT for direct LLM response")
             
             logger.info("Intent analysis completed", 
                        intent_type=intent_result.primary_intent.type.value,
@@ -198,16 +208,16 @@ class IntentAnalyzer:
         # Define intent types that require necessary parameters
         intents_requiring_params = {
             # IntentType.SEARCH_PAPERS: ["title","query","search_keywords"],
-            IntentType.GET_PAPER_DETAILS: ["search_keywords","keywords","paper_id","paper_title", "title", "query"],  # Need at least one
-            IntentType.GET_PAPER_CITATIONS: ["paper_id","paper_title", "title", "query"],
-            IntentType.SEARCH_AUTHORS: ["search_keywords","keywords","query", "author_name","name"],
-            IntentType.GET_AUTHOR_DETAILS: ["search_keywords","keywords","query", "author_name", "author_id","name"],
-            IntentType.GET_AUTHOR_PAPERS: ["author_name", "author_id"],
+            IntentType.GET_PAPER_DETAILS: ["search_keywords","keywords","paper_id","paper_title", "title", "query","paper"],  # Need at least one
+            IntentType.GET_PAPER_CITATIONS: ["paper_id","paper_title", "title", "query","paper"],
+            IntentType.SEARCH_AUTHORS: ["search_keywords","keywords","query", "author_name","name","author"],
+            IntentType.GET_AUTHOR_DETAILS: ["search_keywords","keywords","query", "author_name", "author_id","name","author"],
+            IntentType.GET_AUTHOR_PAPERS: ["search_keywords","keywords","query", "author_name", "author_id","name","author"],
         }
         
         # Intent types that don't require necessary parameters
         intents_not_requiring_params = {
-            IntentType.SEARCH_PAPERS,
+            # IntentType.SEARCH_PAPERS,
             IntentType.SEARCH_AUTHORS,
             IntentType.GENERAL_CHAT,
             IntentType.GET_TRENDING_PAPERS,  # Can return trending papers for all fields
