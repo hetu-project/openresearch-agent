@@ -25,8 +25,8 @@ class IntentType(Enum):
     # Trend analysis
     GET_TRENDING_PAPERS = "get_trending_papers"
     GET_TOP_KEYWORDS = "get_top_keywords"
-    RESEARCH_TRENDS = "unknown"  # todo
-    RESEARCH_LANDSCAPE = "unknown"  # todo
+    RESEARCH_TRENDS = "get_trending_papers"  # todo
+    RESEARCH_LANDSCAPE = "get_trending_papers"  # todo
 
     # General chat
     GENERAL_CHAT = "general_chat"

@@ -278,6 +278,7 @@ class IntentAnalyzer:
             # "collaboration_network": IntentType.COLLABORATION_NETWORK,
 
             # Trend analysis
+            "research_trends": IntentType.GET_TRENDING_PAPERS,
             "trending_papers": IntentType.GET_TRENDING_PAPERS,
             "trending": IntentType.GET_TRENDING_PAPERS,
             "trends": IntentType.GET_TRENDING_PAPERS,

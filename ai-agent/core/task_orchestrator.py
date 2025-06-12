@@ -64,7 +64,9 @@ class TaskOrchestrator:
             # Trend analysis
             IntentType.GET_TRENDING_PAPERS: ["get_trending_papers"],
             IntentType.GET_TOP_KEYWORDS: ["get_top_keywords"],
-            
+            IntentType.RESEARCH_TRENDS: ["get_trending_papers"],
+            IntentType.RESEARCH_LANDSCAPE: ["get_trending_papers"],
+
             # General chat - no tool calls needed
             IntentType.GENERAL_CHAT: [],
             
