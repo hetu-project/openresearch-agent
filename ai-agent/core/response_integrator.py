@@ -865,11 +865,11 @@ class ResponseIntegrator:
                 messages = [
                     {
                         "role": "system",
-                        "content": "You are a professional academic research assistant. Please generate friendly and professional responses based on user queries and research data."
+                        "content": "You are a professional academic research assistant. Please generate friendly and professional responses based on user queries and research data. Always respond in English only."
                     },
                     {
                         "role": "user",
-                        "content": f"User query: {query}\n\nResearch data: {research_data}\n\nPlease generate a natural Chinese response:"
+                        "content": f"User query: {query}\n\nResearch data: {research_data}\n\nPlease generate a natural English response:"
                     }
                 ]
                 
