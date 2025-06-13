@@ -26,7 +26,7 @@ def format_paper_list(papers_data: Dict[str, Any]) -> str:
     
     for i, paper in enumerate(papers, 1):
         result += format_single_paper(paper, index=i)
-        result += "\n" + "="*80 + "\n\n"
+        result += "\n\n"
     
     return result.strip()
 
