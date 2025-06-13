@@ -145,6 +145,16 @@ class ResponseIntegrator:
             "recommendations": []
         }
         
+        raw_text_content = ""
+        for task_id, task_result in processed_data.items():
+            if isinstance(task_result, dict) and task_result.get("mcp_format"):
+                if task_result.get("content_type") == "text":
+                    text_content = task_result.get("text_content", "")
+                    if text_content:
+                        raw_text_content = text_content
+                        break 
+        structured_response["raw_text_content"] = raw_text_content
+
         if strategy == "paper_list":
             structured_response.update(self._structure_paper_list_response(processed_data))
         elif strategy == "paper_detail":
@@ -833,6 +843,9 @@ class ResponseIntegrator:
                                     intent_result: IntentAnalysisResult) -> str:
         """Generate natural language response"""
         try:
+            if intent_result.primary_intent.type in [IntentType.SEARCH_PAPERS, IntentType.SEARCH_AUTHORS]:
+                logger.info("Direct return for search intent, skipping LLM processing")
+                return self._create_direct_search_response(structured_response, intent_result.primary_intent.type)
             # Prepare research data
             research_data = {
                 "strategy": structured_response.get("strategy"),
@@ -894,7 +907,59 @@ class ResponseIntegrator:
             logger.error("Natural response generation failed", error=str(e))
             return self._create_fallback_response(structured_response)
 
+    def _create_direct_search_response(self, structured_response: Dict[str, Any], intent_type: IntentType) -> str:
+        """Create direct search response for specific intent types"""
+        raw_text_content = structured_response.get("raw_text_content", "")
+        
+        if intent_type == IntentType.SEARCH_PAPERS and raw_text_content:
+            try:
+                # Import format functions
+                from core.format.format_paper import format_paper_list
+                import json
+                
+                # Try to parse the raw text content as JSON
+                papers_data = json.loads(raw_text_content)
+                
+                # Use the formatting function to create a nicely formatted response
+                formatted_response = format_paper_list(papers_data)
+                logger.info("Successfully formatted paper search results using format_paper module")
+                return formatted_response
+                
+            except json.JSONDecodeError as e:
+                logger.warning("Failed to parse raw_text_content as JSON for paper formatting", error=str(e))
+                # Fallback to raw content if JSON parsing fails
+                return raw_text_content
+            except Exception as e:
+                logger.warning("Error formatting papers using format_paper module", error=str(e))
+                # Fallback to raw content if formatting fails
+                return raw_text_content
+        elif intent_type == IntentType.SEARCH_AUTHORS and raw_text_content:
+            try:
+                # Import author format functions
+                from core.format.format_author import format_author_list
+                import json
+                
+                # Try to parse the raw text content as JSON
+                authors_data = json.loads(raw_text_content)
+                
+                # Use the formatting function to create a nicely formatted response
+                formatted_response = format_author_list(authors_data)
+                logger.info("Successfully formatted author search results using format_author module")
+                return formatted_response
+                
+            except json.JSONDecodeError as e:
+                logger.warning("Failed to parse raw_text_content as JSON for author formatting", error=str(e))
+                return raw_text_content
+            except Exception as e:
+                    logger.warning("Error formatting authors using format_author module", error=str(e))
+                    # Fallback to raw content if formatting fails
+                    return raw_text_content
+        elif raw_text_content:
+            logger.info("Returning raw text content directly for search intent")
+            return raw_text_content
     
+        return "No results found."
+
     def _build_response_prompt(self,
                              query: str,
                              structured_response: Dict[str, Any],

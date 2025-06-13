@@ -167,7 +167,8 @@ class TaskOrchestrator:
         if tool_name == "search_papers":
             tool_arguments = {
                 "query": intent_parameters.get("query", ""),
-                "limit": intent_parameters.get("limit", 10),
+                "limit": intent_parameters.get("limit", 6),
+                "format": "json",
                 "fields": intent_parameters.get("fields", ["title", "abstract", "authors"])
             }
         elif tool_name == "get_paper_details":
@@ -178,7 +179,7 @@ class TaskOrchestrator:
         elif tool_name == "search_authors":
             tool_arguments = {
                 "query": intent_parameters.get("author_name", ""),
-                "limit": intent_parameters.get("limit", 10)
+                "limit": intent_parameters.get("limit", 6)
             }
         # elif tool_name == "get_author_details":
         #     tool_arguments = {

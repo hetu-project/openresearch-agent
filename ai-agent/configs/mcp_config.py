@@ -6,23 +6,27 @@ from pydantic import Field
 from typing import List
 import json
 import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_path = Path(__file__).parent.parent.parent / ".env"
 
 class MCPConfig(BaseSettings):
     """MCP Server Configuration"""
     
     server_command: List[str] = Field(
         default=["python", "../../../openresearch-mcp-server/src/main.py"],
-        env="MCP_SERVER_COMMAND"
+        alias="MCP_SERVER_COMMAND"
     )
 
-    host: str = Field(default="localhost", env="MCP_SERVER_HOST")
-    port: int = Field(default=8000, env="MCP_SERVER_PORT")
-    timeout: int = Field(default=60, env="MCP_SERVER_TIMEOUT")
-    max_retries: int = Field(default=3, env="MCP_MAX_RETRIES")
-    retry_delay: float = Field(default=1.0, env="MCP_RETRY_DELAY")
+    host: str = Field(default="localhost", alias="MCP_SERVER_HOST")
+    port: int = Field(default=8000, alias="MCP_SERVER_PORT")
+    timeout: int = Field(default=60, alias="MCP_SERVER_TIMEOUT")
+    max_retries: int = Field(default=3, alias="MCP_MAX_RETRIES")
+    retry_delay: float = Field(default=1.0, alias="MCP_RETRY_DELAY")
     
-    enable_debug_log: bool = Field(default=True, env="MCP_ENABLE_DEBUG_LOG")
-    debug_log_file: str = Field(default="logs/mcp_debug.log", env="MCP_DEBUG_LOG_FILE")
+    enable_debug_log: bool = Field(default=True, alias="MCP_ENABLE_DEBUG_LOG")
+    debug_log_file: str = Field(default="logs/mcp_debug.log", alias="MCP_DEBUG_LOG_FILE")
     
     @property
     def base_url(self) -> str:
@@ -90,7 +94,8 @@ class MCPConfig(BaseSettings):
                 pass
     
     model_config = {
-        "env_file": ".env",
+        # "env_prefix": "MCP_",
+        "env_file": env_path,
         "env_file_encoding": "utf-8",
         "extra": "allow"
     }
