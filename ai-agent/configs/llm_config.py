@@ -13,9 +13,9 @@ class LLMConfig(BaseSettings):
     """LLM Configuration - For Together.ai"""
     
     # Together.ai Configuration
-    together_api_key: str = Field(..., alias="LLM_TOGETHER_API_KEY")
+    together_api_key: str = Field(default="tgp_v1_9tFze2l1l7t75CowPN9WmKdK83i8zukPVAEkTXu_plQ", alias="TOGETHER_API_KEY")
     together_model: str = Field(default="Qwen/Qwen2.5-VL-72B-Instruct", alias="LLM_TOGETHER_MODEL")
-    together_base_url: str = Field(default="https://api.together.xyz/v1/chat/completions", alias="LLM_TOGETHER_BASE_URL")
+    together_base_url: str = Field(default="https://api.together.xyz/v1/chat/completions", alias="TOGETHER_BASE_URL")
     
     # General Configuration
     max_tokens: int = Field(default=2000, alias="LLM_MAX_TOKENS")
