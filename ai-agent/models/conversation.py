@@ -109,7 +109,7 @@ class CreateMessageDTO(BaseModel):
     """Create Message DTO"""
     conversation_id: str = Field(..., description="Conversation ID")
     role: MessageRole = Field(..., description="Message Role")
-    content: str = Field(..., description="Message Content", min_length=1, max_length=5000)
+    content: str = Field(..., description="Message Content", min_length=1, max_length=50000)
     
     model_config = {
         "use_enum_values": True,
